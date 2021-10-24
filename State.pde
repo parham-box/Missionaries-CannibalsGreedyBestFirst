@@ -1,9 +1,15 @@
 class State {
+  //number of missionaries on the left side
   private int missionaries;
+  //number of cannibals on the left side
   private int cannibals;
+  //R or L indicating if the boat is on the Right side or the Left side
   private String side;
+  //parent of this node
   private State parent;
+  //the h(n) value of this state
   private int h;
+  //constructor
   State(int missionaries, int cannibals, String side) {
     this.missionaries = missionaries;
     this.cannibals = cannibals;
@@ -15,6 +21,7 @@ class State {
     parent = null;
     calculateH();
   }
+  //overloading
   State(int missionaries, int cannibals, String side, State parent) {
     this.missionaries = missionaries;
     this.cannibals = cannibals;
@@ -26,7 +33,7 @@ class State {
     this.parent = parent;
     calculateH();
   }
-
+  //getters
   public int getMissionaries() {
     return this.missionaries;
   }
@@ -36,14 +43,13 @@ class State {
   public String getSide() {
     return this.side;
   }
-    public int getH() {
+  public int getH() {
     return this.h;
   }
-
-    public State getParent() {
+  public State getParent() {
     return this.parent;
   }
-
+  //setters
   public void setMissionaries(int missionaries) {
     this.missionaries = missionaries;
   }
@@ -56,13 +62,16 @@ class State {
   public void setParent(State parent) {
     this.parent = parent;
   }
-    public void setH(int h) {
+  public void setH(int h) {
     this.h = h;
   }
-  private void calculateH(){
-    setH(missionaries+cannibals-1); 
+  //calculate h(n) value
+  //this is the same admissible heuristic that was offered in previous part of the question.
+  //number of people on the left - 1, is the answer to a relaxed version of this problem. this is an admissible heuristic an it is used in this class
+  private void calculateH() {
+    setH(missionaries+cannibals-1);
   }
-
+  //toggle where boat each with for the next state
   public String toggleSide() {
     String s = getSide();
     if (s == "R") {
@@ -73,6 +82,7 @@ class State {
     }
     return "";
   }
+  //constraints of the problem. Cannibals can not outnumber missionaries on either sides
   public boolean isValid() {
     int m = getMissionaries();
     int c = getCannibals();
@@ -94,7 +104,7 @@ class State {
     }
     return true;
   }
-
+  //this function goes through all possible actions that can be taken for this state and create the subsequent state
   public State[] nextStates() {
     State[] nextStates = new State[5];
     int i = 0;
@@ -102,69 +112,79 @@ class State {
     int c = getCannibals();
     String s = getSide();
     if (s == "L") {
+      //if more than or equal of 2 missionaries on left side, move 2 of missionaries from left to right side
       if (m >=2) {
-        nextStates[i] = new State(m-2, c, toggleSide(),this);
+        nextStates[i] = new State(m-2, c, toggleSide(), this);
         println("Action: 2 missionaries from left to right");
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 1 missionaries on left side, move 1 missonary from left to right side
       if (m >=1) {
-        nextStates[i] = new State(m-1, c, toggleSide(),this);
+        nextStates[i] = new State(m-1, c, toggleSide(), this);
         println("Action: 1 missionary from left to right");
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 1 missionaries and 1 cannibals on left side, move 1 missonary and 1 cannibal from left to right side
       if (m >=1 && c>=1) {
-        nextStates[i] = new State(m-1, c-1, toggleSide(),this);
+        nextStates[i] = new State(m-1, c-1, toggleSide(), this);
         println("Action: 1 missionary and 1 cannibal from left to right");
 
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 2 cannibals on left side, move 2 cannibals from left to right side
       if (c>=2) {
-        nextStates[i] = new State(m, c-2, toggleSide(),this);
+        nextStates[i] = new State(m, c-2, toggleSide(), this);
         println("Action: 2 cannibals from left to right");
 
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 1 cannibals on left side, move 1 cannibal from left to right side
       if (c>=1) {
-        nextStates[i] = new State(m, c-1, toggleSide(),this);
+        nextStates[i] = new State(m, c-1, toggleSide(), this);
         println("Action: 1 cannibal from left to right");
 
         nextStates[i].printState();
         i++;
       }
     } else {
+      //if boat is on right side
+      //if more than or equal of 2 missionaries on right side, move 2 of missionaries from right to left side
       if (3-m >=2) {
-        nextStates[i] = new State(m+2, c, toggleSide(),this);
+        nextStates[i] = new State(m+2, c, toggleSide(), this);
         println("Action: 2 missionaries from right to left");
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 1 missionaries on right side, move 1 missonary from right to left side
       if (3-m >=1) {
-        nextStates[i] = new State(m+1, c, toggleSide(),this);
+        nextStates[i] = new State(m+1, c, toggleSide(), this);
         println("Action: 1 missionary from right to left");
 
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 1 missionaries and 1 cannibals on right side, move 1 missonary and 1 cannibal from right to left side
       if (3-m >=1 && 3-c>=1) {
-        nextStates[i] = new State(m+1, c+1, toggleSide(),this);
+        nextStates[i] = new State(m+1, c+1, toggleSide(), this);
         println("Action: 1 missionary and 1 cannibal from right to left");
 
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 2 cannibals on right side, move 2 cannibals from right to left side
       if (3-c>=2) {
-        nextStates[i] = new State(m, c+2, toggleSide(),this);
+        nextStates[i] = new State(m, c+2, toggleSide(), this);
         println("Action: 2 cannibals from right to left");
-
         nextStates[i].printState();
         i++;
       }
+      //if more than or equal of 1 cannibals on right side, move 1 cannibal from right to left side
       if (3-c>=1) {
-        nextStates[i] = new State(m, c+1, toggleSide(),this);
+        nextStates[i] = new State(m, c+1, toggleSide(), this);
         println("Action: 1 cannibal from right to left");
 
         nextStates[i].printState();
@@ -172,16 +192,20 @@ class State {
       }
     }
     State[] nextState = new State[i];
+    //resize the array
     for (int j =0; j < i; j++) {
       nextState[j] = nextStates[j];
     }
+    //return all possible states
     return nextState;
   }
-    private String stateString() {
+  //return state
+  private String stateString() {
     return "("+getMissionaries()+", "+getCannibals()+", "+getSide()+")";
   }
+  //print state
   private void printState() {
-    println("("+getMissionaries()+", "+getCannibals()+", "+getSide()+")");
+    println(this.stateString());
   }
   public boolean isEqual(State state) {
     return this.getMissionaries() == state.getMissionaries() && this.getCannibals() == state.getCannibals() && this.getSide() == state.getSide();
